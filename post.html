@@ -6,6 +6,17 @@
     <title>Blog Post | Chiari Voices</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZJ4B5GSZSF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ZJ4B5GSZSF');
+</script>
+
 <body>
 
     <nav>
@@ -35,5 +46,33 @@
     <script>
         document.addEventListener('DOMContentLoaded', renderSinglePost);
     </script>
+    <footer class="bg-gray-900 border-t border-gray-800 pt-12 pb-8 mt-auto">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <div class="mb-6 md:mb-0 text-center md:text-left">
+                    <span class="font-display font-bold text-2xl text-white">The Chiari Voices Foundation</span>
+                    <p class="text-sm text-gray-500 mt-2">Amplify. Empower. Advocate.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 my-8"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center text-sm">
+                <div class="text-gray-500 mb-4 md:mb-0 text-center md:text-left">
+                    &copy; 2025 The Chiari Voices Foundation. All rights reserved.
+                </div>
+                <div class="flex space-x-6">
+                    <a href="https://chiarivoices.org/privacy-policy" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors">Privacy Policy</a>
+                    <a href="https://chiarivoices.org/terms-conditions" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors">Terms & Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
+
 </html>

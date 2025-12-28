@@ -1,43 +1,217 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chiari Voices | Blog</title>
+    
+    <link rel="shortcut icon" href="images/chiari-voices-foundation-logo.webp" type="image/webp">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        :root {
+            --color-primary: #9F7AEA; /* Vibrant Purple */
+            --color-primary-dark: #805AD5; /* Darker Purple */
+            --color-background: #1A202C; /* Very Dark Blue/Gray */
+            --color-surface: #2D3748; /* Dark Surface Color */
+            --color-text: #EDF2F7;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+        }
+        
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* --- Hero Section --- */
+        .hero-parallax {
+            background-image: url('images/blog-hero.webp'); 
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+        .hero-parallax::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(26,32,44,0.7) 0%, rgba(26,32,44,1) 100%);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-hover {
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(159, 122, 234, 0.5);
+        }
+        
+        /* Ensure navigation links have the correct underline effect */
+        .nav-link {
+           position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0;
+            height: 2px;
+            background-color: var(--color-primary);
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link:hover::after,
+        .nav-link:focus::after {
+            width: 100%;
+        }
+    </style>
 </head>
-<body>
 
-    <nav>
-        <div style="font-size: 1.2rem; font-weight: bold; color:white;">Chiari Voices</div>
-        <div>
-            <a href="index.html" style="text-decoration: underline;">Home</a>
-            <a href="admin.html">Admin</a>
-            <a href="https://chiarivoices.org">Main Site</a>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZJ4B5GSZSF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ZJ4B5GSZSF');
+</script>
+
+<body class="antialiased flex flex-col min-h-screen">
+
+    <header class="sticky top-0 z-50 bg-gray-900/90 backdrop-blur border-b border-gray-800 h-20 flex items-center">
+        <div class="container mx-auto px-6 flex justify-between items-center w-full">
             
-        </div>
-    </nav>
+            <a href="https://chiarivoices.org" class="font-display font-black text-2xl tracking-wider uppercase hover:opacity-90 transition-opacity no-underline" aria-label="The Chiari Voices Foundation - Home">
+                <span class="text-white">CHIARI</span><span class="text-[var(--color-primary)]">VOICES</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center space-x-6 text-sm !bg-transparent !p-0 !m-0" role="navigation">
+                <a href="https://chiarivoices.org/#about" class="nav-link text-gray-300 font-medium hover:text-white no-underline">About</a>
+                <a href="https://chiarivoices.org/#mission" class="nav-link text-gray-300 font-medium hover:text-white no-underline">Purpose</a>
+                <a href="https://chiarivoices.org/#resources" class="nav-link text-gray-300 font-medium hover:text-white no-underline">Resources</a>
+                <a href="https://chiarivoices.org/#gallery" class="nav-link text-gray-300 font-medium hover:text-white no-underline">Gallery</a>
+                <a href="index.html" class="nav-link text-white font-bold no-underline">Blog</a>
+                <a href="https://chiarivoices.org/#contact" class="nav-link text-gray-300 font-medium hover:text-white no-underline">Contact</a>
+                
+                <a href="https://chiarivoices.org/#donate" class="ml-4 px-5 py-2 rounded-lg font-semibold bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] btn-hover no-underline">
+                    Donate
+                </a>
+            </nav>
 
-    <header id="hero-section" class="hero-container">
-        <div class="hero-overlay">
-            <div class="hero-content static-hero-text">
-                 <h1>Sharing Stories. Finding Strength.</h1>
-                 <p>Welcome to Chiari Voices, a safe and supportive community blog for individuals and families navigating the complexities of Chiari Malformation.</p>
-            </div>
+            <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Toggle navigation menu">
+                <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
         </div>
+
+        <nav id="mobile-menu" class="hidden absolute top-20 left-0 w-full bg-gray-900 border-t border-gray-800 px-6 pb-4 space-y-2 text-sm z-40">
+            <a href="https://chiarivoices.org/#about" class="block py-3 text-gray-300 hover:text-white text-center">About</a>
+            <a href="https://chiarivoices.org/#mission" class="block py-3 text-gray-300 hover:text-white text-center">Purpose</a>
+            <a href="https://chiarivoices.org/#resources" class="block py-3 text-gray-300 hover:text-white text-center">Resources</a>
+            <a href="https://chiarivoices.org/#gallery" class="block py-3 text-gray-300 hover:text-white text-center">Gallery</a>
+            <a href="index.html" class="block py-3 text-white font-bold text-center">Blog</a>
+            <a href="https://chiarivoices.org/#contact" class="block py-3 text-gray-300 hover:text-white text-center">Contact</a>
+            <a href="https://chiarivoices.org/#donate" class="block mt-4 w-full text-center px-5 py-2 rounded-lg font-semibold bg-[var(--color-primary)] text-white btn-hover">
+                Donate
+            </a>
+        </nav>
     </header>
 
-    <div class="container">
-        <h2 style="margin-top: 40px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block;">Latest Updates</h2>
-        <div id="blog-feed">
-            <p>Loading posts...</p>
-        </div>
-    </div>
+    <main class="flex-grow">
+        <header id="hero-section" class="hero-parallax py-20 md:py-32 flex items-center justify-center">
+            <div class="hero-content container mx-auto px-6 text-center text-white">
+                <h1 class="font-display text-4xl md:text-6xl font-black leading-tight uppercase tracking-wider mb-6">
+                    Sharing Stories. <span class="text-[var(--color-primary)]">Finding Strength.</span>
+                </h1>
+                <p class="text-lg md:text-xl max-w-2xl mx-auto text-gray-300">
+                    Welcome to Chiari Voices, a safe and supportive community blog for individuals and families navigating the complexities of Chiari Malformation.
+                </p>
+            </div>
+        </header>
 
+        <div class="container mx-auto px-6 py-12">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold font-display text-white border-b-4 border-[var(--color-primary)] pb-2 inline-block">
+                    Latest Updates
+                </h2>
+            </div>
+            
+            <div id="blog-feed" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-400 animate-pulse">Loading posts...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 border-t border-gray-800 pt-12 pb-8 mt-auto">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <div class="mb-6 md:mb-0 text-center md:text-left">
+                    <span class="font-display font-bold text-2xl text-white">
+                        CHIARI<span class="text-[var(--color-primary)]">VOICES</span>
+                    </span>
+                    <p class="text-sm text-gray-500 mt-2">Amplify. Empower. Advocate.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 my-8"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center text-sm">
+                <div class="text-gray-500 mb-4 md:mb-0 text-center md:text-left">
+                    &copy; 2025 The Chiari Voices Foundation. All rights reserved.
+                </div>
+                <div class="flex space-x-6">
+                    <a href="https://chiarivoices.org/privacy-policy" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors">Privacy Policy</a>
+                    <a href="https://chiarivoices.org/terms-conditions" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors">Terms & Conditions</a>
+                    <a href="https://blog.chiarivoices.org/admin.html" class="text-gray-400 hover:text-[var(--color-primary)] transition-colors">Admin</a>
+                </div>
+            </div>
+        </div>
+    </footer>
     <script src="app.js"></script>
     <script>
-        // Run the render function specifically for this page
+        // 1. Initialize Lucide Icons
+        lucide.createIcons();
+
+        // 2. Run the blog render function
         document.addEventListener('DOMContentLoaded', renderFeed);
+
+        // 3. Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if(mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
     </script>
 </body>
 </html>
