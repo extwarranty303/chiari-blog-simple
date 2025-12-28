@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Chiari Voices</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        /* Lock Screen Styles */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #f4f4f4; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .login-box {
+            background: white; padding: 40px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 300px;
+        }
+        #admin-content { display: none; }
+        
+        /* New SEO Section Styles */
+        .seo-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border: 1px solid #ddd;
+        }
+        .seo-section h3 { margin-top: 0; color: var(--primary); }
+        .seo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 600px) { .seo-grid { grid-template-columns: 1fr; } }
+        label { font-weight: bold; font-size: 0.9rem; display: block; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2 style="margin-top:0;">Admin Access</h2>
+            <input type="password" id="admin-pass-input" placeholder="Passcode" style="width:100%; padding:10px; margin-bottom:15px;">
+            <button id="unlock-btn" style="background:var(--primary); color:white; border:none; padding:10px 20px; width:100%; cursor:pointer;">Unlock</button>
+            <p id="login-error" style="color:red; display:none; margin-top:10px;">Incorrect Passcode</p>
+        </div>
+    </div>
+
+    <div id="admin-content">
+        <nav>
+            <div style="color:white; font-weight:bold;">Admin Panel</div>
+            <a href="index.html">View Site</a>
+        </nav>
+
+        <div class="container admin-panel">
+            <h2 id="form-header">Write a New Post</h2>
+            <input type="hidden" id="edit-mode-id">
+
+            <input type="text" id="input-title" placeholder="Post Title (H1)">
+            <input type="text" id="input-author" placeholder="Author Name" value="Chiari Voices Team">
+            <input type="text" id="input-image" placeholder="Paste Banner Image Link (https://...)" style="margin-bottom: 20px;">
+
+            <div id="editor-container"></div>
+            
+            <div class="seo-section">
+                <h3>SEO Configuration (Metadata)</h3>
+                
+                <div class="seo-grid">
+                    <div>
+                        <label>Meta Title (Browser Tab)</label>
+                        <input type="text" id="meta-title" placeholder="e.g., Understanding Chiari | Chiari Voices">
+                    </div>
+                    <div>
+                        <label>Slug (URL Friendly Name)</label>
+                        <input type="text" id="meta-slug" placeholder="e.g., understanding-chiari-symptoms">
+                    </div>
+                </div>
+
+                <label style="margin-top:15px;">Meta Description (Google Summary)</label>
+                <textarea id="meta-desc" style="width:100%; padding:10px; height:80px; margin-bottom:15px; border-radius:4px; border:1px solid #ddd;" placeholder="A short summary for search engines (150-160 chars)..."></textarea>
+
+                <div class="seo-grid">
+                    <div>
+                        <label>Primary Keyword</label>
+                        <input type="text" id="meta-keyword-primary" placeholder="e.g., Chiari Malformation">
+                    </div>
+                    <div>
+                        <label>Secondary Keywords (Comma separated)</label>
+                        <input type="text" id="meta-keywords-sec" placeholder="e.g., surgery, symptoms, support">
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="btn-primary" id="save-btn">Publish Post</button>
+                <button id="cancel-btn" style="display:none; background:#ccc; border:none; padding:10px 20px; border-radius:4px; margin-left:10px; cursor:pointer;">Cancel Edit</button>
+            </div>
+
+            <hr style="margin: 40px 0; border: 0; border-top: 2px solid #ddd;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2>Manage Existing Posts</h2>
+                <button onclick="downloadSitemap()" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+                    📥 Download Sitemap.xml
+                </button>
+            </div>
+
+            <div id="admin-post-list" style="background: white; padding: 20px; border-radius: 8px;">
+                <p>Loading posts...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="app.js"></script>
+
+    <script>
+        const SECRET_PASS = "Chiari2025"; 
+        let quill; 
+
+        // --- 1. LOGIN LOGIC ---
+        function unlockAdminPanel() {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+            initEditor(); 
+            renderAdminPostList();
+            sessionStorage.setItem('admin_unlocked', 'true');
+        }
+
+        function checkPasscode() {
+            if (document.getElementById('admin-pass-input').value === SECRET_PASS) {
+                unlockAdminPanel();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+        
+        // --- 2. EDITOR SETUP ---
+        function initEditor() {
+            if (quill) return; 
+            var toolbarOptions = [
+                ['bold', 'italic', 'underline', 'strike'], ['blockquote', 'code-block'],
+                [{ 'header': 1 }, { 'header': 2 }], [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'color': [] }, { 'background': [] }], ['link', 'image']
+            ];
+            quill = new Quill('#editor-container', {
+                theme: 'snow', placeholder: 'Compose an epic post...',
+                modules: { toolbar: { container: toolbarOptions, handlers: { 'image': function() {
+                    var val = prompt('Image URL?'); if(val) this.quill.insertEmbed(this.quill.getSelection().index, 'image', val, Quill.sources.USER);
+                }}}}
+            });
+        }
+
+        // --- 3. SAVE LOGIC (WITH SEO) ---
+        function handleSave() {
+            if (typeof getPosts !== "function") return alert("Error: app.js missing");
+
+            const title = document.getElementById('input-title').value;
+            const author = document.getElementById('input-author').value || "Admin";
+            const image = document.getElementById('input-image').value;
+            const editId = document.getElementById('edit-mode-id').value;
+            
+            // SEO Fields
+            const metaTitle = document.getElementById('meta-title').value;
+            const metaSlug = document.getElementById('meta-slug').value;
+            const metaDesc = document.getElementById('meta-desc').value;
+            const metaKeyPrimary = document.getElementById('meta-keyword-primary').value;
+            const metaKeySec = document.getElementById('meta-keywords-sec').value;
+
+            if (!quill) return;
+            const content = quill.root.innerHTML;
+
+            if(!title || title.trim() === "") return alert("Please enter a Post Title.");
+
+            try {
+                const currentPosts = getPosts();
+                const postData = {
+                    title, author, image, content,
+                    seo: {
+                        metaTitle: metaTitle || title,
+                        slug: metaSlug,
+                        description: metaDesc,
+                        primaryKeyword: metaKeyPrimary,
+                        secondaryKeywords: metaKeySec
+                    }
+                };
+
+                if (editId) {
+                    const index = currentPosts.findIndex(p => p.id == editId);
+                    if (index > -1) {
+                        currentPosts[index] = { ...currentPosts[index], ...postData };
+                        alert("Post Updated!");
+                    }
+                } else {
+                    currentPosts.push({
+                        id: Date.now(),
+                        date: new Date().toLocaleDateString(),
+                        ...postData
+                    });
+                    alert("Post Published!");
+                }
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(currentPosts));
+                resetForm();
+                renderAdminPostList();
+            } catch (error) { console.error(error); alert("Save failed."); }
+        }
+
+        // --- 4. EDIT / DELETE / RESET LOGIC ---
+        function editPost(id) {
+            const post = getPosts().find(p => p.id == id);
+            if (!post) return;
+
+            document.getElementById('input-title').value = post.title;
+            document.getElementById('input-author').value = post.author;
+            document.getElementById('input-image').value = post.image || "";
+            quill.root.innerHTML = post.content;
+            document.getElementById('edit-mode-id').value = post.id;
+
+            if (post.seo) {
+                document.getElementById('meta-title').value = post.seo.metaTitle || "";
+                document.getElementById('meta-slug').value = post.seo.slug || "";
+                document.getElementById('meta-desc').value = post.seo.description || "";
+                document.getElementById('meta-keyword-primary').value = post.seo.primaryKeyword || "";
+                document.getElementById('meta-keywords-sec').value = post.seo.secondaryKeywords || "";
+            } else {
+                document.getElementById('meta-title').value = "";
+                document.getElementById('meta-slug').value = "";
+                document.getElementById('meta-desc').value = "";
+                document.getElementById('meta-keyword-primary').value = "";
+                document.getElementById('meta-keywords-sec').value = "";
+            }
+
+            document.getElementById('form-header').innerText = "Edit Post";
+            document.getElementById('save-btn').innerText = "Update Post";
+            document.getElementById('save-btn').style.backgroundColor = "#ffa500";
+            document.getElementById('cancel-btn').style.display = "inline-block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            document.getElementById('input-title').value = "";
+            document.getElementById('input-author').value = "Chiari Voices Team";
+            document.getElementById('input-image').value = "";
+            document.getElementById('edit-mode-id').value = "";
+            
+            document.getElementById('meta-title').value = "";
+            document.getElementById('meta-slug').value = "";
+            document.getElementById('meta-desc').value = "";
+            document.getElementById('meta-keyword-primary').value = "";
+            document.getElementById('meta-keywords-sec').value = "";
+
+            if (quill) quill.root.innerHTML = "";
+            document.getElementById('form-header').innerText = "Write a New Post";
+            document.getElementById('save-btn').innerText = "Publish Post";
+            document.getElementById('save-btn').style.backgroundColor = "";
+            document.getElementById('cancel-btn').style.display = "none";
+        }
+
+        function renderAdminPostList() {
+            const list = document.getElementById('admin-post-list');
+            if(!list || typeof getPosts !== "function") return;
+            const posts = getPosts();
+            if(posts.length === 0) return list.innerHTML = "<p>No posts found.</p>";
+            
+            list.innerHTML = [...posts].reverse().map(p => `
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
+                    <div><strong>${p.title}</strong><br><small>${p.date}</small></div>
+                    <div>
+                        <button onclick="editPost(${p.id})" style="background:#ffa500; color:white; border:none; padding:5px 10px; margin-right:5px; cursor:pointer; border-radius:4px;">Edit</button>
+                        <button onclick="deletePost(${p.id})" style="background:#ff4444; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:4px;">Delete</button>
+                    </div>
+                </div>`).join('');
+        }
+
+        function deletePost(id) {
+            if(!confirm("Are you sure?")) return;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(getPosts().filter(p => p.id !== id)));
+            renderAdminPostList();
+            if(document.getElementById('edit-mode-id').value == id) resetForm();
+        }
+
+        // --- 5. SITEMAP GENERATOR ---
+        function downloadSitemap() {
+            const posts = getPosts();
+            const baseUrl = "https://blog.chiarivoices.org";
+            const dateNow = new Date().toISOString().split('T')[0];
+
+            let xmlContent = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+            
+            xmlContent += `    <url>\n        <loc>${baseUrl}/index.html</loc>\n        <lastmod>${dateNow}</lastmod>\n        <changefreq>daily</changefreq>\n        <priority>1.0</priority>\n    </url>\n`;
+
+            posts.forEach(post => {
+                let slug = (post.seo && post.seo.slug) ? post.seo.slug : post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                const safeSlug = slug.replace(/&/g, '&amp;');
+                xmlContent += `    <url>\n        <loc>${baseUrl}/post.html?id=${post.id}&amp;slug=${safeSlug}</loc>\n        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n        <priority>0.8</priority>\n    </url>\n`;
+            });
+
+            xmlContent += `</urlset>`;
+
+            const blob = new Blob([xmlContent], { type: 'text/xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sitemap.xml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // --- 6. INITIALIZATION LISTENERS ---
+        document.getElementById('unlock-btn').addEventListener('click', checkPasscode);
+        document.getElementById('admin-pass-input').addEventListener('keypress', (e) => { if(e.key==='Enter') checkPasscode() });
+        document.getElementById('save-btn').addEventListener('click', handleSave);
+        document.getElementById('cancel-btn').addEventListener('click', resetForm);
+
+        if (sessionStorage.getItem('admin_unlocked') === 'true') unlockAdminPanel();
+    </script>
+</body>
+</html>

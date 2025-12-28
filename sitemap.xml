@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://blog.chiarivoices.org/index.html</loc>
+        <lastmod>2025-12-26</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://blog.chiarivoices.org/post.html?id=1766751489552&amp;slug=welcome-to-chiari-voices</loc>
+        <lastmod>2025-12-26</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://blog.chiarivoices.org/post.html?id=1766757857692&amp;slug=chiari-diagnostic-odyssey-misdiagnosis</loc>
+        <lastmod>2025-12-26</lastmod>
+        <priority>0.8</priority>
+    </url>
+</urlset>

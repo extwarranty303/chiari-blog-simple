@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiari Voices | Blog</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <div style="font-size: 1.2rem; font-weight: bold; color:white;">Chiari Voices</div>
+        <div>
+            <a href="index.html" style="text-decoration: underline;">Home</a>
+            <a href="admin.html">Admin</a>
+            <a href="https://chiarivoices.org">Main Site</a>
+            
+        </div>
+    </nav>
+
+    <header id="hero-section" class="hero-container">
+        <div class="hero-overlay">
+            <div class="hero-content static-hero-text">
+                 <h1>Sharing Stories. Finding Strength.</h1>
+                 <p>Welcome to Chiari Voices, a safe and supportive community blog for individuals and families navigating the complexities of Chiari Malformation.</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 style="margin-top: 40px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block;">Latest Updates</h2>
+        <div id="blog-feed">
+            <p>Loading posts...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Run the render function specifically for this page
+        document.addEventListener('DOMContentLoaded', renderFeed);
+    </script>
+</body>
+</html>
